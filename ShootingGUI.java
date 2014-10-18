@@ -20,7 +20,10 @@ public class ShootingGUI extends JFrame{
     private JLabel statusBar;
     private Graphics draw;
     private int mousePX  , mousePY, mouseDX , mouseDY;
+    private double initAA , initPwr;
     private boolean pullArrow = false, player1Turn = true, fireArrow = false;
+    
+    private int arrowX, arrowY;
     
     public ShootingGUI(){
         super("Shooting Star By Rayson & Eng Yao");
@@ -76,8 +79,7 @@ public class ShootingGUI extends JFrame{
                 Thread t = new Thread(){
                     public void run(){
                         // forever:
-                        while( true ){
-                            
+                        while( pullArrow ){
                             // rapaint it
                             SwingUtilities.invokeLater( new Runnable(){
                                 public void run(){
@@ -97,7 +99,25 @@ public class ShootingGUI extends JFrame{
             } 
             if(fireArrow)
             {
-            
+                Thread shoot = new Thread(){
+                    public void run(){
+                        // forever:
+                        while( fireArrow ){
+                            // rapaint it
+                            SwingUtilities.invokeLater( new Runnable(){
+                                public void run(){
+                                    repaint();
+                                }
+                            });
+                            
+                            // sleep for while
+                            try{
+                                Thread.sleep( 1000 );
+                            }catch( InterruptedException ie ){}
+                        }
+                    }
+                };
+                shoot.start();
             }
         }
         
@@ -107,7 +127,12 @@ public class ShootingGUI extends JFrame{
             if(pullArrow){
                 g.drawLine(mousePX, mousePY, mouseDX, mouseDY);
             }
-            
+            if(fireArrow){
+                mousePX += 10;
+                mousePY -= 10; 
+                statusBar.setText(String.format("Arrow move to %d %d", mousePX , mousePY));
+                g.drawLine(mousePX, mousePY, mousePX+50, mousePY-50);
+            }
         }
 
     }
@@ -122,14 +147,14 @@ public class ShootingGUI extends JFrame{
         @Override
         public void mousePressed(MouseEvent e) {
             if(player1Turn){
-                mousePX = 117;
+                mousePX = 217;
                 mousePY = 500;
                 mouseDX = mousePX;
                 mouseDY = mousePY;
                 player1Turn = false;
             }
             else{
-                mousePX = 1083;
+                mousePX = 983;
                 mousePY = 500;
                 mouseDX = mousePX;
                 mouseDY = mousePY;
