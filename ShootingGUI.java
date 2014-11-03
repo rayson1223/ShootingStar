@@ -10,6 +10,9 @@ import java.applet.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.QuadCurve2D;
 
 /**
  *
@@ -38,6 +41,8 @@ public class ShootingGUI extends JFrame{
 
         private Timer timer;
         private final int DELAY = 60;
+        private  int HEIGHT = 600, GROUND_HEIGHT = 50;
+        private Player p1,p2;
         
         public ShootingPanel(){
             
@@ -47,16 +52,61 @@ public class ShootingGUI extends JFrame{
             this.addMouseListener(mouse);
             this.addMouseMotionListener(mouse);
             
+            p1 = new Player();
+            p2 = new Player();
+            initPlayer();
+            
             this.setDoubleBuffered(true);
             
             timer = new Timer(DELAY , this);
             timer.start();
         }
         
+        public void initPlayer(){
+            // init P1 info
+			
+            p1.MAN_POSITION=200;
+            p1.ARM_START_X=p1.MAN_POSITION+p1.HEAD_SIZE/2;
+            p1.ARM_START_Y=this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH/2;
+            p1.bow_x=p1.ARM_START_X+p1.ARM_LENG;
+            p1.bow_y=p1.ARM_START_Y;
+            p1.bow_enda_x=p1.bow_x;
+            p1.bow_enda_y=p1.bow_y;
+            p1.bow_endb_x=p1.bow_x;
+            p1.bow_endb_y=p1.bow_y;
+            p1.life_block_messag_x=40;
+            p1.life_block_messag_y=35;
+            p1.life_block_x=30;
+            p1.life_block_y=20;
+            p1.life_block_length=20;
+            p1.life_block_width=200;
+            p1.life_block_fill_width=200;
+
+            // init p2 info
+            p2.MAN_POSITION=1000;
+            p2.ARM_START_X=p2.MAN_POSITION+p2.HEAD_SIZE/2;
+            p2.ARM_START_Y=this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH/2;
+            p2.bow_x=p2.ARM_START_X-p2.ARM_LENG;
+            p2.bow_y=p2.ARM_START_Y;
+            p2.bow_enda_x=p2.bow_x;
+            p2.bow_enda_y=p2.bow_y;
+            p2.bow_endb_x=p2.bow_x;
+            p2.bow_endb_y=p2.bow_y;
+            p2.life_block_messag_x=980;
+            p2.life_block_messag_y=35;
+            p2.life_block_x=970;
+            p2.life_block_y=20;
+            p2.life_block_length=20;
+            p2.life_block_width=200;
+            p2.life_block_fill_width=200;
+        }
+        
         public void paintComponent(Graphics g){
             drawGround(g);
-            DrawPlayer(g , 200, 550);
-            DrawPlayer(g , 1000, 550);
+            DrawPlayer(g);
+            
+            p1Arrow(g, 200, 550);
+            p2Arrow(g, 1000, 550);
         }
     
         public void drawGround(Graphics g){
@@ -64,15 +114,84 @@ public class ShootingGUI extends JFrame{
             g.drawLine( 0, 550, 1200 , 550 );
         }
         
-        public void DrawPlayer(Graphics g, int x, int y){
-            g.fillOval(x-13, y-90, 26, 26);
-            g.drawLine(x,y-64,x,y-14);
-            g.drawLine(x,y-64,x-17,y-50);
-            g.drawLine(x,y-64,x+17,y-50);
-            g.drawLine(x,y-14,x-17,y);
-            g.drawLine(x,y-14,x+17,y);
+        public void DrawPlayer(Graphics g) {
+            g.setColor(Color.BLACK);
+            Graphics2D g2d=(Graphics2D)g;
+
+            //AffineTransform old=g2d.getTransform();
+
+            /*** player 1 ***/
+
+            // head
+            g.fillOval(p1.MAN_POSITION, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT, p1.HEAD_SIZE, p1.HEAD_SIZE);
+
+            // body
+            g2d.setStroke(new BasicStroke(5));
+            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE, p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH));
+
+            // leg
+            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH, p1.MAN_POSITION+p1.HEAD_SIZE/2-20, this.HEIGHT-this.GROUND_HEIGHT));
+            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH, p1.MAN_POSITION+p1.HEAD_SIZE/2+20, this.HEIGHT-this.GROUND_HEIGHT));
+
+            // arm
+            g2d.draw(new Line2D.Float(p1.ARM_START_X, p1.ARM_START_Y, p1.bow_x, p1.bow_y));
+
+            // bow
+            g2d.draw(new QuadCurve2D.Float(p1.bow_enda_x, p1.bow_enda_y, p1.bow_x, p1.bow_y, p1.bow_endb_x, p1.bow_endb_y));
+
+            /*** player 2 ***/
+
+            // head
+            g.fillOval(p2.MAN_POSITION, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT, p2.HEAD_SIZE, p2.HEAD_SIZE);
+
+            // body
+            g2d.setStroke(new BasicStroke(5));
+            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE, p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH));
+
+            // leg
+            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH, p2.MAN_POSITION+p2.HEAD_SIZE/2-20, this.HEIGHT-this.GROUND_HEIGHT));
+            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH, p2.MAN_POSITION+p2.HEAD_SIZE/2+20, this.HEIGHT-this.GROUND_HEIGHT));
+
+            // arm
+            g2d.draw(new Line2D.Float(p2.ARM_START_X, p2.ARM_START_Y, p2.bow_x, p2.bow_y));
+
+            // bow
+            g2d.draw(new QuadCurve2D.Float(p2.bow_enda_x, p2.bow_enda_y, p2.bow_x, p2.bow_y, p2.bow_endb_x, p2.bow_endb_y));
+
+            g2d.setStroke(new BasicStroke(2));
         }
         
+//        public void DrawPlayer2(Graphics g, int x, int y) {
+//            Graphics2D g2d = (Graphics2D) g;
+//            g2d.setStroke(new BasicStroke(4));
+//            g.fillOval(x - 13, y - 90, 26, 26); //head
+//            g.drawLine(x, y - 64, x, y - 14); //body
+//            g.drawLine(x, y - 64, x - 20, y - 64); //left arm
+//            g.drawLine(x, y - 64, x + 17, y - 50); //right arm
+//            g.drawLine(x, y - 14, x - 17, y); //left leg
+//            g.drawLine(x, y - 14, x + 17, y); //right leg
+//        }
+        
+        public void p1Arrow(Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(2));
+            g.drawLine(x + 20, y - 64, x + 50, y - 64);
+            g.drawLine(x + 50, y - 64, x + 45, y - 54);
+            g.drawLine(x + 50, y - 64, x + 45, y - 74);
+            g.drawLine(x + 20, y - 90, x + 20, y - 30);
+            g2d.draw(new QuadCurve2D.Float(x + 20, y - 90, x + 55, y - 60, x + 20, y - 30));
+        }
+
+        public void p2Arrow(Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(2));
+            g.drawLine(x - 20, y - 64, x - 50, y - 64);
+            g.drawLine(x - 50, y - 64, x - 45, y - 54);
+            g.drawLine(x - 50, y - 64, x - 45, y - 74);
+            g.drawLine(x - 20, y - 90, x - 20, y - 30);
+            g2d.draw(new QuadCurve2D.Float(x - 20, y - 90, x - 55, y - 60, x - 20, y - 30));
+        }
+   
         @Override
         public void actionPerformed(ActionEvent e) {
             if(pullArrow){
@@ -147,15 +266,15 @@ public class ShootingGUI extends JFrame{
         @Override
         public void mousePressed(MouseEvent e) {
             if(player1Turn){
-                mousePX = 217;
-                mousePY = 500;
+                mousePX = 200;
+                mousePY = 486;
                 mouseDX = mousePX;
                 mouseDY = mousePY;
                 player1Turn = false;
             }
             else{
-                mousePX = 983;
-                mousePY = 500;
+                mousePX = 1000;
+                mousePY = 486;
                 mouseDX = mousePX;
                 mouseDY = mousePY;
                 player1Turn = true;
