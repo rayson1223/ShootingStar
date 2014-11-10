@@ -45,7 +45,7 @@ public class ShootingGUI extends JFrame{
         private double y_diff;
         private double distance;
         private double power;
-        private final double MAX_POWER = 300;
+        private final double MAX_SPEED = 10.0;
         private CrazyArrow currArrow;
         
         
@@ -220,8 +220,11 @@ public class ShootingGUI extends JFrame{
                     p2ArmArrow(g, mouseDX, mouseDY);
 
                     power = (Math.sqrt( x_diff*x_diff + y_diff*y_diff ))/300*100;
-                    power = power >= 100.00 ? 100: power;
-                    System.out.println("power =" + power);
+                    System.out.println("power = " + power);
+                    
+                    double speed = power / 10.0;
+                    speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
+                    System.out.println("speed = " + speed);
                     
                     currArrow.setAngle(angle);
                 }
@@ -229,8 +232,11 @@ public class ShootingGUI extends JFrame{
                     p1ArmArrow(g, mouseDX, mouseDY);
                     
                     power = (Math.sqrt( x_diff*x_diff + y_diff*y_diff ))/300*100;
-                    power = power >= 100.00 ? 100: power;
-                    System.out.println("power =" + power);
+                    System.out.println("power = " + power);
+                    
+                    double speed = power / 10.0;
+                    speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
+                    System.out.println("speed = " + speed);
                     
                     currArrow.setAngle(angle);
                 }
