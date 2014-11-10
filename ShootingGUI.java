@@ -222,6 +222,7 @@ public class ShootingGUI extends JFrame{
                     int xDiff = (int)(1000+50/distance*x_diff) - mouseDX;
                     int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
                     power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    power = power >= 100.00 ? 100: power;
                     System.out.println("power =" + power);
                     
                     currArrow.setAngle(angle);
@@ -232,6 +233,7 @@ public class ShootingGUI extends JFrame{
                     int xDiff = (int)(200+50/distance*x_diff) - mouseDX;
                     int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
                     power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    power = power >= 100.00 ? 100: power;
                     System.out.println("power =" + power);
                     
                     currArrow.setAngle(angle);
