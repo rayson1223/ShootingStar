@@ -41,7 +41,13 @@ public class ShootingGUI extends JFrame{
         private Timer timer;
         private final int DELAY = 60;
         private double angle;
+        private double x_diff;
+        private double y_diff;
+        private double distance;
+        private double power;
+        private final double MAX_POWER = 300;
         private CrazyArrow currArrow;
+        
         
         public ShootingPanel(){
             
@@ -87,8 +93,6 @@ public class ShootingGUI extends JFrame{
             g2d.setStroke(new BasicStroke(4));
             g.fillOval(x - 13, y - 90, 26, 26); //head
             g.drawLine(x, y - 64, x, y - 14); //body
-            g.drawLine(x, y - 64, x - 20, y - 64); //left arm
-            g.drawLine(x, y - 64, x + 17, y - 50); //right arm
             g.drawLine(x, y - 14, x - 17, y); //left leg
             g.drawLine(x, y - 14, x + 17, y); //right leg
         }
@@ -98,9 +102,9 @@ public class ShootingGUI extends JFrame{
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(4));
             
-            double x_diff = x-200;
-            double y_diff = y-486;
-            double distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
+            x_diff = x-200;
+            y_diff = y-486;
+            distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
             double ooh = y_diff/distance;
             angle = Math.asin(ooh);
             
@@ -130,9 +134,9 @@ public class ShootingGUI extends JFrame{
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(4));
             
-            double x_diff = x-1000;
-            double y_diff = y-486;
-            double distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
+            x_diff = x-1000;
+            y_diff = y-486;
+            distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
             double ooh = y_diff/distance;
             angle = Math.asin(ooh);
             
@@ -214,15 +218,27 @@ public class ShootingGUI extends JFrame{
                 currArrow = new CrazyArrow();
                 if(player1Turn){
                     p2ArmArrow(g, mouseDX, mouseDY);
+
+                    int xDiff = (int)(1000+50/distance*x_diff) - mouseDX;
+                    int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
+                    power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    System.out.println("power =" + power);
+                    
                     currArrow.setAngle(angle);
                 }
                 else{
                     p1ArmArrow(g, mouseDX, mouseDY);
+                    
+                    int xDiff = (int)(200+50/distance*x_diff) - mouseDX;
+                    int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
+                    power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    System.out.println("power =" + power);
+                    
                     currArrow.setAngle(angle);
                 }
             }
             if(fireArrow){
-                System.out.println(currArrow.getAngle());
+                //System.out.println(currArrow.getAngle());
                 mousePX += 10;
                 mousePY -= 10; 
                 statusBar.setText(String.format("Arrow move to %d %d", mousePX , mousePY));

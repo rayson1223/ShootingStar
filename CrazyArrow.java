@@ -11,7 +11,7 @@ package shootingstar;
  */
 public class CrazyArrow extends Thread {
     private String name;
-    private int headX, headY, bodyEX, bodyEY;
+    private int headX, headY, tailX, tailY;
     private double speed;
     private double gravity;
     private double angle;
@@ -39,20 +39,20 @@ public class CrazyArrow extends Thread {
         this.headY = headY;
     }
 
-    public int getBodyEX() {
-        return bodyEX;
+    public int getTailX() {
+        return tailX;
     }
 
-    public void setBodyEX(int bodyEX) {
-        this.bodyEX = bodyEX;
+    public void setTailX(int tailX) {
+        this.tailX = tailX;
     }
 
-    public int getBodyEY() {
-        return bodyEY;
+    public int getTailY() {
+        return tailY;
     }
 
-    public void setBodyEY(int bodyEY) {
-        this.bodyEY = bodyEY;
+    public void setTailY(int tailY) {
+        this.tailY = tailY;
     }
 
     public double getSpeed() {
