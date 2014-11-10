@@ -219,9 +219,7 @@ public class ShootingGUI extends JFrame{
                 if(player1Turn){
                     p2ArmArrow(g, mouseDX, mouseDY);
 
-                    int xDiff = (int)(1000+50/distance*x_diff) - mouseDX;
-                    int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
-                    power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    power = (Math.sqrt( x_diff*x_diff + y_diff*y_diff ))/300*100;
                     power = power >= 100.00 ? 100: power;
                     System.out.println("power =" + power);
                     
@@ -230,9 +228,7 @@ public class ShootingGUI extends JFrame{
                 else{
                     p1ArmArrow(g, mouseDX, mouseDY);
                     
-                    int xDiff = (int)(200+50/distance*x_diff) - mouseDX;
-                    int yDiff = (int)(486+50/distance*y_diff) - mouseDY;
-                    power = (Math.sqrt( xDiff*xDiff + yDiff*yDiff ))/300*100;
+                    power = (Math.sqrt( x_diff*x_diff + y_diff*y_diff ))/300*100;
                     power = power >= 100.00 ? 100: power;
                     System.out.println("power =" + power);
                     
