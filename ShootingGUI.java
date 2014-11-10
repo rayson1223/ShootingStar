@@ -11,7 +11,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.QuadCurve2D;
 
 /**
@@ -41,8 +40,8 @@ public class ShootingGUI extends JFrame{
 
         private Timer timer;
         private final int DELAY = 60;
-        private  int HEIGHT = 600, GROUND_HEIGHT = 50;
-        private Player p1,p2;
+        private double angle;
+        private CrazyArrow currArrow;
         
         public ShootingPanel(){
             
@@ -52,61 +51,19 @@ public class ShootingGUI extends JFrame{
             this.addMouseListener(mouse);
             this.addMouseMotionListener(mouse);
             
-            p1 = new Player();
-            p2 = new Player();
-            initPlayer();
-            
             this.setDoubleBuffered(true);
             
             timer = new Timer(DELAY , this);
             timer.start();
         }
         
-        public void initPlayer(){
-            // init P1 info
-			
-            p1.MAN_POSITION=200;
-            p1.ARM_START_X=p1.MAN_POSITION+p1.HEAD_SIZE/2;
-            p1.ARM_START_Y=this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH/2;
-            p1.bow_x=p1.ARM_START_X+p1.ARM_LENG;
-            p1.bow_y=p1.ARM_START_Y;
-            p1.bow_enda_x=p1.bow_x;
-            p1.bow_enda_y=p1.bow_y;
-            p1.bow_endb_x=p1.bow_x;
-            p1.bow_endb_y=p1.bow_y;
-            p1.life_block_messag_x=40;
-            p1.life_block_messag_y=35;
-            p1.life_block_x=30;
-            p1.life_block_y=20;
-            p1.life_block_length=20;
-            p1.life_block_width=200;
-            p1.life_block_fill_width=200;
-
-            // init p2 info
-            p2.MAN_POSITION=1000;
-            p2.ARM_START_X=p2.MAN_POSITION+p2.HEAD_SIZE/2;
-            p2.ARM_START_Y=this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH/2;
-            p2.bow_x=p2.ARM_START_X-p2.ARM_LENG;
-            p2.bow_y=p2.ARM_START_Y;
-            p2.bow_enda_x=p2.bow_x;
-            p2.bow_enda_y=p2.bow_y;
-            p2.bow_endb_x=p2.bow_x;
-            p2.bow_endb_y=p2.bow_y;
-            p2.life_block_messag_x=980;
-            p2.life_block_messag_y=35;
-            p2.life_block_x=970;
-            p2.life_block_y=20;
-            p2.life_block_length=20;
-            p2.life_block_width=200;
-            p2.life_block_fill_width=200;
-        }
-        
         public void paintComponent(Graphics g){
             drawGround(g);
-            DrawPlayer(g);
-            
-            p1Arrow(g, 200, 550);
-            p2Arrow(g, 1000, 550);
+            DrawPlayer1(g , 200, 550);
+            DrawPlayer2(g , 1000, 550);
+
+            p1ArmArrow(g, 200, 486);
+            p2ArmArrow(g, 1000, 486);
         }
     
         public void drawGround(Graphics g){
@@ -114,84 +71,92 @@ public class ShootingGUI extends JFrame{
             g.drawLine( 0, 550, 1200 , 550 );
         }
         
-        public void DrawPlayer(Graphics g) {
-            g.setColor(Color.BLACK);
-            Graphics2D g2d=(Graphics2D)g;
+        public void DrawPlayer1(Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(4));
+            
+            g.fillOval(x - 13, y - 90, 26, 26); //head
+            g.drawLine(x, y - 64, x, y - 14); //body
 
-            //AffineTransform old=g2d.getTransform();
-
-            /*** player 1 ***/
-
-            // head
-            g.fillOval(p1.MAN_POSITION, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT, p1.HEAD_SIZE, p1.HEAD_SIZE);
-
-            // body
-            g2d.setStroke(new BasicStroke(5));
-            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE, p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH));
-
-            // leg
-            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH, p1.MAN_POSITION+p1.HEAD_SIZE/2-20, this.HEIGHT-this.GROUND_HEIGHT));
-            g2d.draw(new Line2D.Float(p1.MAN_POSITION+p1.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p1.MAN_HEIGHT+p1.HEAD_SIZE+p1.BODY_LENGTH, p1.MAN_POSITION+p1.HEAD_SIZE/2+20, this.HEIGHT-this.GROUND_HEIGHT));
-
-            // arm
-            g2d.draw(new Line2D.Float(p1.ARM_START_X, p1.ARM_START_Y, p1.bow_x, p1.bow_y));
-
-            // bow
-            g2d.draw(new QuadCurve2D.Float(p1.bow_enda_x, p1.bow_enda_y, p1.bow_x, p1.bow_y, p1.bow_endb_x, p1.bow_endb_y));
-
-            /*** player 2 ***/
-
-            // head
-            g.fillOval(p2.MAN_POSITION, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT, p2.HEAD_SIZE, p2.HEAD_SIZE);
-
-            // body
-            g2d.setStroke(new BasicStroke(5));
-            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE, p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH));
-
-            // leg
-            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH, p2.MAN_POSITION+p2.HEAD_SIZE/2-20, this.HEIGHT-this.GROUND_HEIGHT));
-            g2d.draw(new Line2D.Float(p2.MAN_POSITION+p2.HEAD_SIZE/2, this.HEIGHT-this.GROUND_HEIGHT-p2.MAN_HEIGHT+p2.HEAD_SIZE+p2.BODY_LENGTH, p2.MAN_POSITION+p2.HEAD_SIZE/2+20, this.HEIGHT-this.GROUND_HEIGHT));
-
-            // arm
-            g2d.draw(new Line2D.Float(p2.ARM_START_X, p2.ARM_START_Y, p2.bow_x, p2.bow_y));
-
-            // bow
-            g2d.draw(new QuadCurve2D.Float(p2.bow_enda_x, p2.bow_enda_y, p2.bow_x, p2.bow_y, p2.bow_endb_x, p2.bow_endb_y));
-
-            g2d.setStroke(new BasicStroke(2));
+            g.drawLine(x, y - 14, x - 17, y); //left leg
+            g.drawLine(x, y - 14, x + 17, y); //right leg
         }
         
-//        public void DrawPlayer2(Graphics g, int x, int y) {
-//            Graphics2D g2d = (Graphics2D) g;
-//            g2d.setStroke(new BasicStroke(4));
-//            g.fillOval(x - 13, y - 90, 26, 26); //head
-//            g.drawLine(x, y - 64, x, y - 14); //body
-//            g.drawLine(x, y - 64, x - 20, y - 64); //left arm
-//            g.drawLine(x, y - 64, x + 17, y - 50); //right arm
-//            g.drawLine(x, y - 14, x - 17, y); //left leg
-//            g.drawLine(x, y - 14, x + 17, y); //right leg
-//        }
+        public void DrawPlayer2(Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(4));
+            g.fillOval(x - 13, y - 90, 26, 26); //head
+            g.drawLine(x, y - 64, x, y - 14); //body
+            g.drawLine(x, y - 64, x - 20, y - 64); //left arm
+            g.drawLine(x, y - 64, x + 17, y - 50); //right arm
+            g.drawLine(x, y - 14, x - 17, y); //left leg
+            g.drawLine(x, y - 14, x + 17, y); //right leg
+        }
         
-        public void p1Arrow(Graphics g, int x, int y) {
+        public void p1ArmArrow (Graphics g, double x, double y){
+            g.setColor(Color.black);
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setStroke(new BasicStroke(2));
-            g.drawLine(x + 20, y - 64, x + 50, y - 64);
-            g.drawLine(x + 50, y - 64, x + 45, y - 54);
-            g.drawLine(x + 50, y - 64, x + 45, y - 74);
-            g.drawLine(x + 20, y - 90, x + 20, y - 30);
-            g2d.draw(new QuadCurve2D.Float(x + 20, y - 90, x + 55, y - 60, x + 20, y - 30));
+            g2d.setStroke(new BasicStroke(4));
+            
+            double x_diff = x-200;
+            double y_diff = y-486;
+            double distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
+            double ooh = y_diff/distance;
+            angle = Math.asin(ooh);
+            
+            if(x_diff<0){
+                angle = Math.PI-angle;
+            }
+            
+            if(x_diff == 0 && y_diff == 0){
+                g.drawLine((int)x, (int)y, (int)x + 20, (int)y);
+                g2d.setStroke(new BasicStroke(2));
+                g.drawLine((int)x+21, (int)y, (int)x + 50, (int)y);
+                g2d.draw(new QuadCurve2D.Float((float)x + 20,(float)y - 30, (float)x + 55, (float)y, (float)x + 20, (float)y +30));
+                g2d.setStroke(new BasicStroke(1));
+                g.drawLine((int)x+20, (int)y-30, (int)x+20, (int)y+30);
+            }else {
+                g.drawLine(200, 486, (int)(200+20/distance*x_diff), (int)(486+20/distance*y_diff));
+                g2d.setStroke(new BasicStroke(2));
+                g.drawLine((int)(200+20/distance*x_diff), (int)(486+20/distance*y_diff), (int)(200+50/distance*x_diff), (int)(486+50/distance*y_diff));
+                g2d.draw(new QuadCurve2D.Float((float)(200+36.0555*Math.cos((angle+0.98279323))),(float)(486+36.0555*Math.sin((angle+0.98279323))), (float)(200+55/distance*x_diff), (float)(486+55/distance*y_diff), (float)(200+36.0555*Math.cos((angle-0.98279323))),(float)(486+36.0555*Math.sin((angle-0.98279323)))));
+                g2d.setStroke(new BasicStroke(1));
+                g.drawLine((int)(200+36.0555*Math.cos((angle+0.98279323))), (int)(486+36.0555*Math.sin((angle+0.98279323))), (int)(200+36.0555*Math.cos((angle-0.98279323))), (int)(486+36.0555*Math.sin((angle-0.98279323))));
+            }
         }
+        
+        public void p2ArmArrow (Graphics g, double x, double y){
+            g.setColor(Color.black);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(4));
+            
+            double x_diff = x-1000;
+            double y_diff = y-486;
+            double distance = Math.sqrt(x_diff*x_diff+y_diff*y_diff);
+            double ooh = y_diff/distance;
+            angle = Math.asin(ooh);
+            
+            if(x_diff<0){
+                angle = Math.PI-angle;
+            }
+            
+            if(x_diff == 0 && y_diff == 0){
+                g.drawLine((int)x, (int)y, (int)x - 20, (int)y);
+                g2d.setStroke(new BasicStroke(2));
+                g.drawLine((int)x-21, (int)y, (int)x - 50, (int)y);
+                g2d.draw(new QuadCurve2D.Float((float)x - 20,(float)y - 30, (float)x - 55, (float)y, (float)x - 20, (float)y +30));
+                g2d.setStroke(new BasicStroke(1));
+                g.drawLine((int)x-20, (int)y-30, (int)x-20, (int)y+30);
+            }else {
+                g.drawLine(1000, 486, (int)(1000+20/distance*x_diff), (int)(486+20/distance*y_diff));
+                g2d.setStroke(new BasicStroke(2));
+                g.drawLine((int)(1000+20/distance*x_diff), (int)(486+20/distance*y_diff), (int)(1000+50/distance*x_diff), (int)(486+50/distance*y_diff));
+                g2d.draw(new QuadCurve2D.Float((float)(1000+36.0555*Math.cos((angle+0.98279323))),(float)(486+36.0555*Math.sin((angle+0.98279323))), (float)(1000+55/distance*x_diff), (float)(486+55/distance*y_diff), (float)(1000+36.0555*Math.cos((angle-0.98279323))),(float)(486+36.0555*Math.sin((angle-0.98279323)))));
+                g2d.setStroke(new BasicStroke(1));
+                g.drawLine((int)(1000+36.0555*Math.cos((angle+0.98279323))), (int)(486+36.0555*Math.sin((angle+0.98279323))), (int)(1000+36.0555*Math.cos((angle-0.98279323))), (int)(486+36.0555*Math.sin((angle-0.98279323))));
+            }
+        }   
 
-        public void p2Arrow(Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setStroke(new BasicStroke(2));
-            g.drawLine(x - 20, y - 64, x - 50, y - 64);
-            g.drawLine(x - 50, y - 64, x - 45, y - 54);
-            g.drawLine(x - 50, y - 64, x - 45, y - 74);
-            g.drawLine(x - 20, y - 90, x - 20, y - 30);
-            g2d.draw(new QuadCurve2D.Float(x - 20, y - 90, x - 55, y - 60, x - 20, y - 30));
-        }
-   
         @Override
         public void actionPerformed(ActionEvent e) {
             if(pullArrow){
@@ -214,7 +179,8 @@ public class ShootingGUI extends JFrame{
                     }
                 };
                 t.start();
-                System.out.println(mouseDX + " " + mouseDY + " " + mousePX + " " + mousePY);
+                
+//                System.out.println(mouseDX + " " + mouseDY + " " + mousePX + " " + mousePY);
             } 
             if(fireArrow)
             {
@@ -244,9 +210,19 @@ public class ShootingGUI extends JFrame{
         public void paint(Graphics g) {
             super.paint(g);
             if(pullArrow){
-                g.drawLine(mousePX, mousePY, mouseDX, mouseDY);
+//                g.drawLine(mousePX, mousePY, mouseDX, mouseDY);
+                currArrow = new CrazyArrow();
+                if(player1Turn){
+                    p2ArmArrow(g, mouseDX, mouseDY);
+                    currArrow.setAngle(angle);
+                }
+                else{
+                    p1ArmArrow(g, mouseDX, mouseDY);
+                    currArrow.setAngle(angle);
+                }
             }
             if(fireArrow){
+                System.out.println(currArrow.getAngle());
                 mousePX += 10;
                 mousePY -= 10; 
                 statusBar.setText(String.format("Arrow move to %d %d", mousePX , mousePY));
