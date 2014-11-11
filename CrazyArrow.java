@@ -80,6 +80,12 @@ public class CrazyArrow extends Thread {
     }
     
     @Override
+    public String toString(){
+        return "The arrow headX=" + this.headX + " headY=" + this.headY + " TailX=" + this.tailX + " TailY=" + this.tailY
+                + " angle=" + this.angle + " speed=" + this.speed;
+    }
+    
+    @Override
    public void run() {
        
    }

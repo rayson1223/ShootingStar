@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.Graphics2D;
 import java.awt.geom.QuadCurve2D;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -47,8 +48,10 @@ public class ShootingGUI extends JFrame {
         private double y_diff;
         private double distance;
         private double power;
-        private final double MAX_SPEED = 10.0;
+        private final double MAX_SPEED = 40.0;
         private CrazyArrow currArrow;
+        private ArrayList<CrazyArrow> arrowGrave;
+        private Player player1, player2;
 
         public ShootingPanel() {
 
@@ -60,17 +63,51 @@ public class ShootingGUI extends JFrame {
 
             this.setDoubleBuffered(true);
 
+            player1 = new Player(200, 550);
+            player2 = new Player(1000, 550);
+
+            arrowGrave = new ArrayList();
+
             timer = new Timer(DELAY, this);
             timer.start();
         }
 
         public void paintComponent(Graphics g) {
             drawGround(g);
-            DrawPlayer1(g, 200, 550);
-            DrawPlayer2(g, 1000, 550);
+            DrawPlayer(g, 200, 550);
+            DrawPlayer(g, 1000, 550);
 
             p1ArmArrow(g, 200, 486);
             p2ArmArrow(g, 1000, 486);
+
+            //System.out.println("Player 1 arrow size "+ player1.getArrows().size());
+            ArrayList<CrazyArrow> temp = new ArrayList();
+            CrazyArrow tempArr = new CrazyArrow();
+
+            temp = player1.getArrows();
+
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(1));
+
+            for (int i = 0; i < temp.size(); i++) {
+                tempArr = temp.get(i);
+                g.drawLine(tempArr.getTailX(), tempArr.getTailY(), tempArr.getHeadX(), tempArr.getHeadY());
+            }
+            //System.out.println("Player 2 arrow size "+ player2.getArrows().size());
+            temp = player2.getArrows();
+
+            for (int i = 0; i < temp.size(); i++) {
+                tempArr = temp.get(i);
+                g.drawLine(tempArr.getTailX(), tempArr.getTailY(), tempArr.getHeadX(), tempArr.getHeadY());
+            }
+
+            if (arrowGrave.size() > 0) {
+                for (int i = 0; i < arrowGrave.size(); i++) {
+                    tempArr = arrowGrave.get(i);
+                    g.drawLine(tempArr.getTailX(), tempArr.getTailY(), tempArr.getHeadX(), tempArr.getHeadY());
+                }
+            }
+
         }
 
         public void drawGround(Graphics g) {
@@ -78,22 +115,13 @@ public class ShootingGUI extends JFrame {
             g.drawLine(0, 550, 1200, 550);
         }
 
-        public void DrawPlayer1(Graphics g, int x, int y) {
+        public void DrawPlayer(Graphics g, int x, int y) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(4));
 
             g.fillOval(x - 13, y - 90, 26, 26); //head
             g.drawLine(x, y - 64, x, y - 14); //body
 
-            g.drawLine(x, y - 14, x - 17, y); //left leg
-            g.drawLine(x, y - 14, x + 17, y); //right leg
-        }
-
-        public void DrawPlayer2(Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setStroke(new BasicStroke(4));
-            g.fillOval(x - 13, y - 90, 26, 26); //head
-            g.drawLine(x, y - 64, x, y - 14); //body
             g.drawLine(x, y - 14, x - 17, y); //left leg
             g.drawLine(x, y - 14, x + 17, y); //right leg
         }
@@ -114,14 +142,9 @@ public class ShootingGUI extends JFrame {
             } else if (x_diff > 0 && y_diff < 0) {
                 angle = angle + Math.PI * 2;
             }
-            System.out.println(angle);
+            //System.out.println(angle);
             if (x_diff == 0 && y_diff == 0) {
-                g.drawLine((int) x, (int) y, (int) x + 20, (int) y);
-                g2d.setStroke(new BasicStroke(2));
-                g.drawLine((int) x + 21, (int) y, (int) x + 50, (int) y);
-                g2d.draw(new QuadCurve2D.Float((float) x + 20, (float) y - 30, (float) x + 55, (float) y, (float) x + 20, (float) y + 30));
-                g2d.setStroke(new BasicStroke(1));
-                g.drawLine((int) x + 20, (int) y - 30, (int) x + 20, (int) y + 30);
+
             } else {
                 g.drawLine(200, 486, (int) (200 + (20 * Math.cos(angle))), (int) (486 - 20 * Math.sin(angle)));
                 g2d.setStroke(new BasicStroke(2));
@@ -158,12 +181,7 @@ public class ShootingGUI extends JFrame {
             }
 
             if (x_diff == 0 && y_diff == 0) {
-                g.drawLine((int) x, (int) y, (int) x - 20, (int) y);
-                g2d.setStroke(new BasicStroke(2));
-                g.drawLine((int) x - 21, (int) y, (int) x - 50, (int) y);
-                g2d.draw(new QuadCurve2D.Float((float) x - 20, (float) y - 30, (float) x - 55, (float) y, (float) x - 20, (float) y + 30));
-                g2d.setStroke(new BasicStroke(1));
-                g.drawLine((int) x - 20, (int) y - 30, (int) x - 20, (int) y + 30);
+
             } else {
                 g.drawLine(1000, 486, (int) (1000 + (20 * Math.cos(angle))), (int) (486 - 20 * Math.sin(angle)));
                 g2d.setStroke(new BasicStroke(2));
@@ -240,17 +258,14 @@ public class ShootingGUI extends JFrame {
             super.paint(g);
 
             if (pullArrow) {
-//                g.drawLine(mousePX, mousePY, mouseDX, mouseDY);
                 currArrow = new CrazyArrow();
                 if (player1Turn) {
                     p2ArmArrow(g, mouseDX, mouseDY);
 
                     power = (Math.sqrt(x_diff * x_diff + y_diff * y_diff)) / 300 * 100;
-                    System.out.println("power = " + power);
 
-                    double speed = power / 10.0;
+                    double speed = power * 2 / 10.0;
                     speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
-                    System.out.println("speed = " + speed);
 
                     currArrow.setSpeed(speed);
                     currArrow.setAngle(angle);
@@ -262,11 +277,12 @@ public class ShootingGUI extends JFrame {
                     p1ArmArrow(g, mouseDX, mouseDY);
 
                     power = (Math.sqrt(x_diff * x_diff + y_diff * y_diff)) / 300 * 100;
-                    //System.out.println("power = " + power);
 
-                    double speed = power / 10.0;
+                    double speed = power * 2 / 10.0;
                     speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
-                    //System.out.println("speed = " + speed);
+
+                    System.out.println(speed);
+
                     currArrow.setSpeed(speed);
                     currArrow.setAngle(angle);
                     currArrow.setHeadX((int) (200 + (50 * Math.cos(angle))));
@@ -276,12 +292,9 @@ public class ShootingGUI extends JFrame {
                 }
             }
             if (fireArrow) {
-                //System.out.println(currArrow.getAngle());
                 int diffx = (int) (currArrow.getSpeed() * Math.cos(currArrow.getAngle()));
                 int diffy = (int) (currArrow.getSpeed() * Math.sin(currArrow.getAngle()));
-                System.out.println(diffx);
-                System.out.println(diffy);
-                System.out.println(currArrow.getAngle());
+
                 int headx = currArrow.getHeadX();
                 headx += diffx;
                 currArrow.setHeadX(headx);
@@ -300,9 +313,96 @@ public class ShootingGUI extends JFrame {
 
                 statusBar.setText(String.format("Arrow move to %d %d", mousePX, mousePY));
                 g.drawLine(tailx, taily, headx, heady);
+
+                update();
+                
+                if (player1Turn) {
+                    if (player1.isHit(currArrow)) {
+                        currArrow.setSpeed(0);
+                        statusBar.setText(String.format("Player 1 is hit and damage!! (Heatlh left " + player1.getHealth() + ")"));
+                        fireArrow = false;
+                    }
+                    if (isHitGround(currArrow)) {
+                        arrowGrave.add(currArrow);
+                        currArrow.setSpeed(0);
+                    }
+                    if (isFlyOut(currArrow)) {
+                        currArrow.setSpeed(0);
+                    }
+                } else {
+                    if (player2.isHit(currArrow)) {
+                        currArrow.setSpeed(0);
+                        statusBar.setText(String.format("Player 2 is hit and damage!! (Heatlh left " + player2.getHealth() + ")"));
+
+                        fireArrow = false;
+                    }
+                    if (isHitGround(currArrow)) {
+                        arrowGrave.add(currArrow);
+                        currArrow.setSpeed(0);
+                    }
+                    if (isFlyOut(currArrow)) {
+                        currArrow.setSpeed(0);
+                    }
+                }
             }
         }
 
+        public void update() {
+            double horv = currArrow.getSpeed() * Math.cos(currArrow.getAngle());
+            double verv = currArrow.getSpeed() * Math.sin(currArrow.getAngle());
+
+            verv -= 9.8 * DELAY / 1000;
+            System.out.println(verv);
+
+            currArrow.setSpeed(Math.sqrt(horv * horv + verv * verv));
+
+            if (player1Turn) {
+                if (verv >= 0 && horv >= 0) {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.asin(ooh));
+                } else if (verv < 0 && horv >= 0) {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.asin(ooh) + Math.PI * 2);
+                } else {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.PI - Math.asin(ooh));
+                }
+
+            } else {
+                if (verv >= 0 && horv >= 0) {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.asin(ooh));
+                } else if (verv < 0 && horv >= 0) {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.asin(ooh) + Math.PI * 2);
+                } else {
+                    double ooh = verv / currArrow.getSpeed();
+                    currArrow.setAngle(Math.PI - Math.asin(ooh));
+                }
+            }
+
+            int midx = (currArrow.getHeadX() + currArrow.getTailX()) / 2;
+            int midy = (currArrow.getHeadY() + currArrow.getTailY()) / 2;
+
+            currArrow.setHeadX((int) (midx + 15 * Math.cos(currArrow.getAngle())));
+            currArrow.setHeadY((int) (midy - 15 * Math.sin(currArrow.getAngle())));
+            currArrow.setTailX((int) (midx - 15 * Math.cos(currArrow.getAngle())));
+            currArrow.setTailY((int) (midy + 15 * Math.sin(currArrow.getAngle())));
+        }
+
+        public boolean isHitGround(CrazyArrow arr) {
+            if (arr.getHeadY() > 550) {
+                return true;
+            }
+            return false;
+        }
+
+        public boolean isFlyOut(CrazyArrow arr) {
+            if (arr.getTailX() < 0 || arr.getTailX() > 1200) {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class MouseHandler implements MouseListener, MouseMotionListener {

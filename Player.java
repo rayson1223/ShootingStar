@@ -8,36 +8,73 @@ package shootingstar;
 import java.util.ArrayList;
 
 public class Player {
+    private int topY, midY, botY, leftX, rightX;
+    private int health;
+    private ArrayList<CrazyArrow> arrowList;
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+    
     // person info
-	
-    public final int ARM_LENG=40;
-    public final int HEAD_SIZE=30;
-    public final int BODY_LENGTH=40;
-    public final int MAN_HEIGHT=100;
-    public final int LIFE_FACTOR=20;
-    public int MAN_POSITION;
-    public int ARM_START_X;
-    public int ARM_START_Y;
+    public Player(int x, int y){
+        this.health = 100;
+        
+        this.topY = 460;
+        this.midY = 486;
+        this.botY = y;
+        
+        this.leftX = x - 13;
+        this.rightX = x + 13;
+        
+        arrowList=new ArrayList<CrazyArrow>();
+    }
 
-    // bow info
-
-    public int bow_x;
-    public int bow_y;
-
-    public int bow_enda_x;
-    public int bow_enda_y;
-    public int bow_endb_x;
-    public int bow_endb_y;
-
-    // arrow list
-    public ArrayList<CrazyArrow> arrowList=new ArrayList<CrazyArrow>();
-
-    // life info
-    public int life_block_messag_x;
-    public int life_block_messag_y;
-    public int life_block_x;
-    public int life_block_y;
-    public int life_block_length;
-    public int life_block_width;
-    public int life_block_fill_width;
+    public boolean isHit(CrazyArrow arr){
+        
+        if(arr.getHeadX() <= this.rightX && arr.getHeadX() >= this.leftX){
+            if(arr.getHeadY() <= this.botY && arr.getHeadY() >= this.midY){
+                arrowList.add(arr);
+                this.health -= 20;
+                return true;
+            }
+            else if(arr.getHeadY() <= midY && arr.getHeadY() >= topY){
+                arrowList.add(arr);
+                this.health -= 50;
+                return true;
+            }
+        }
+        if(arr.getTailX() <= this.rightX && arr.getTailX() >= this.leftX){
+            if(arr.getTailY() <= this.botY && arr.getTailY() >= this.midY){
+                arrowList.add(arr);
+                this.health -= 20;
+                return true;
+            }
+            else if(arr.getTailY() <= midY && arr.getTailY() >= topY){
+                arrowList.add(arr);
+                this.health -= 50;
+                return true;
+            }
+        }
+        
+        
+        return false;
+    }
+    
+    public boolean isDead(){
+        return this.health <= 0;
+    }
+    
+    public ArrayList getArrows(){
+        return arrowList;
+    }
+    
+    @Override
+    public String toString(){
+        return topY + " " + midY + " " +botY + " " + leftX + " " + rightX;
+    }
 }
