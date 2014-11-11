@@ -65,6 +65,20 @@ public class Player {
         return false;
     }
     
+    public boolean isHeadShot(CrazyArrow arr){
+        if(arr.getHeadX() <= this.rightX && arr.getHeadX() >= this.leftX){
+            if(arr.getHeadY() <= midY && arr.getHeadY() >= topY){
+                return true;
+            }
+        }
+        if(arr.getTailX() <= this.rightX && arr.getTailX() >= this.leftX){
+            if(arr.getTailY() <= midY && arr.getTailY() >= topY){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean isDead(){
         return this.health <= 0;
     }

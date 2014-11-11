@@ -12,8 +12,13 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.Graphics2D;
 import java.awt.geom.QuadCurve2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -29,12 +34,12 @@ public class ShootingGUI extends JFrame {
     private boolean pullArrow = false, player1Turn = true, fireArrow = false;
 
     private int arrowX, arrowY;
-
+  
     public ShootingGUI() {
         super("Shooting Star By Rayson & Eng Yao");
         main = new ShootingPanel();
         add(main, BorderLayout.CENTER);
-
+        
         statusBar = new JLabel("Default");
         add(statusBar, BorderLayout.SOUTH);
     }
@@ -53,10 +58,13 @@ public class ShootingGUI extends JFrame {
         private ArrayList<CrazyArrow> arrowGrave;
         private Player player1, player2;
 
+        Image background = Toolkit.getDefaultToolkit().createImage("214015.jpg");
+        
         public ShootingPanel() {
 
-            this.setBackground(Color.white);
+            //this.setBackground(Color.white);
 
+            
             MouseHandler mouse = new MouseHandler();
             this.addMouseListener(mouse);
             this.addMouseMotionListener(mouse);
@@ -73,6 +81,7 @@ public class ShootingGUI extends JFrame {
         }
 
         public void paintComponent(Graphics g) {
+            g.drawImage(background, 0, 0, null);
             drawGround(g);
             DrawPlayer(g, 200, 550);
             DrawPlayer(g, 1000, 550);
@@ -107,7 +116,16 @@ public class ShootingGUI extends JFrame {
                     g.drawLine(tempArr.getTailX(), tempArr.getTailY(), tempArr.getHeadX(), tempArr.getHeadY());
                 }
             }
-
+            
+            g.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(5));
+            
+            if(player1.getHealth() < 0){
+                g2d.drawString("Game Over, Player 2 Win!", 1200/2-50, 600/2);
+            }
+            if(player2.getHealth() < 0){
+                g2d.drawString("Game Over, Player 1 Win!", 1200/2-50, 600/2);
+            }
         }
 
         public void drawGround(Graphics g) {
@@ -256,7 +274,7 @@ public class ShootingGUI extends JFrame {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-
+            
             if (pullArrow) {
                 currArrow = new CrazyArrow();
                 if (player1Turn) {
@@ -279,6 +297,7 @@ public class ShootingGUI extends JFrame {
                     power = (Math.sqrt(x_diff * x_diff + y_diff * y_diff)) / 300 * 100;
 
                     double speed = power * 2 / 10.0;
+                    
                     speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
 
                     System.out.println(speed);
@@ -347,6 +366,11 @@ public class ShootingGUI extends JFrame {
             }
         }
 
+        public void bloodBurst(CrazyArrow arr){
+            Random r = new Random();
+            
+        }
+        
         public void update() {
             double horv = currArrow.getSpeed() * Math.cos(currArrow.getAngle());
             double verv = currArrow.getSpeed() * Math.sin(currArrow.getAngle());
