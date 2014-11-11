@@ -32,7 +32,7 @@ public class ShootingGUI extends JFrame {
     private int mousePX, mousePY, mouseDX, mouseDY;
     private double initAA, initPwr;
     private boolean pullArrow = false, player1Turn = true, fireArrow = false;
-
+    private Player player1, player2;
     private int arrowX, arrowY;
   
     public ShootingGUI() {
@@ -56,8 +56,7 @@ public class ShootingGUI extends JFrame {
         private final double MAX_SPEED = 40.0;
         private CrazyArrow currArrow;
         private ArrayList<CrazyArrow> arrowGrave;
-        private Player player1, player2;
-
+        
         Image background = Toolkit.getDefaultToolkit().createImage("214015.jpg");
         
         public ShootingPanel() {
@@ -81,7 +80,7 @@ public class ShootingGUI extends JFrame {
         }
 
         public void paintComponent(Graphics g) {
-            g.drawImage(background, 0, 0, null);
+            //g.drawImage(background, 0, 0, null);
             drawGround(g);
             DrawPlayer(g, 200, 550);
             DrawPlayer(g, 1000, 550);
@@ -113,19 +112,10 @@ public class ShootingGUI extends JFrame {
             if (arrowGrave.size() > 0) {
                 for (int i = 0; i < arrowGrave.size(); i++) {
                     tempArr = arrowGrave.get(i);
-                    g.drawLine(tempArr.getTailX(), tempArr.getTailY(), tempArr.getHeadX(), tempArr.getHeadY());
+                    g.drawLine(tempArr.getHeadX(), tempArr.getHeadY(), tempArr.getTailX(), tempArr.getTailY());
                 }
             }
             
-            g.setColor(Color.BLUE);
-            g2d.setStroke(new BasicStroke(5));
-            
-            if(player1.getHealth() < 0){
-                g2d.drawString("Game Over, Player 2 Win!", 1200/2-50, 600/2);
-            }
-            if(player2.getHealth() < 0){
-                g2d.drawString("Game Over, Player 1 Win!", 1200/2-50, 600/2);
-            }
         }
 
         public void drawGround(Graphics g) {
@@ -364,13 +354,21 @@ public class ShootingGUI extends JFrame {
                     }
                 }
             }
+            
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setStroke(new BasicStroke(1));
+            
+            g.setColor(Color.BLUE);
+            g2d.setStroke(new BasicStroke(5));
+            
+            if(player1.getHealth() < 0){
+                g2d.drawString("Game Over, Player 2 Win!", 1200/2-50, 600/2);
+            }
+            if(player2.getHealth() < 0){
+                g2d.drawString("Game Over, Player 1 Win!", 1200/2-50, 600/2);
+            }
         }
 
-        public void bloodBurst(CrazyArrow arr){
-            Random r = new Random();
-            
-        }
-        
         public void update() {
             double horv = currArrow.getSpeed() * Math.cos(currArrow.getAngle());
             double verv = currArrow.getSpeed() * Math.sin(currArrow.getAngle());
