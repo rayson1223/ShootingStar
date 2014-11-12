@@ -367,6 +367,9 @@ public class ShootingGUI extends JFrame {
             if(player2.getHealth() < 0){
                 g2d.drawString("Game Over, Player 1 Win!", 1200/2-50, 600/2);
             }
+            
+            g2d.drawString("Player 1's health : " + player1.getHealth() , 100, 100);
+            g2d.drawString("Player 2's health : " + player2.getHealth() , 900, 100);
         }
 
         public void update() {
