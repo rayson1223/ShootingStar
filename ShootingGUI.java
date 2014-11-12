@@ -112,6 +112,7 @@ public class ShootingGUI extends JFrame {
             if (arrowGrave.size() > 0) {
                 for (int i = 0; i < arrowGrave.size(); i++) {
                     tempArr = arrowGrave.get(i);
+                    //System.out.println(tempArr.getHeadX() + " " + tempArr.getHeadY() + " " + tempArr.getTailX() + " " + tempArr.getTailY());
                     g.drawLine(tempArr.getHeadX(), tempArr.getHeadY(), tempArr.getTailX(), tempArr.getTailY());
                 }
             }
@@ -119,11 +120,12 @@ public class ShootingGUI extends JFrame {
         }
 
         public void drawGround(Graphics g) {
-            g.setColor(Color.black);
-            g.drawLine(0, 550, 1200, 550);
+            g.setColor(Color.green);
+            g.fillRect(0, 550, 1200, 550);
         }
 
         public void DrawPlayer(Graphics g, int x, int y) {
+            g.setColor(Color.black);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(4));
 
@@ -290,7 +292,7 @@ public class ShootingGUI extends JFrame {
                     
                     speed = speed >= MAX_SPEED ? MAX_SPEED : speed;
 
-                    System.out.println(speed);
+  //                  System.out.println(speed);
 
                     currArrow.setSpeed(speed);
                     currArrow.setAngle(angle);
@@ -377,7 +379,7 @@ public class ShootingGUI extends JFrame {
             double verv = currArrow.getSpeed() * Math.sin(currArrow.getAngle());
 
             verv -= 9.8 * DELAY / 1000;
-            System.out.println(verv);
+            //System.out.println(verv);
 
             currArrow.setSpeed(Math.sqrt(horv * horv + verv * verv));
 
@@ -467,7 +469,7 @@ public class ShootingGUI extends JFrame {
         @Override
         public void mouseEntered(MouseEvent e) {
             statusBar.setText(String.format("Mouse Enter at %d %d", e.getX(), e.getY()));
-            main.setBackground(Color.LIGHT_GRAY);
+            main.setBackground(Color.cyan);
         }
 
         @Override
